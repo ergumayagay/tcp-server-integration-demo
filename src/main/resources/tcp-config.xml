@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-ip="http://www.springframework.org/schema/integration/ip"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-5.0.xsd
+		http://www.springframework.org/schema/integration/ip http://www.springframework.org/schema/integration/ip/spring-integration-ip.xsd">
+
+
+	<int-ip:tcp-connection-factory id="server"
+	 type="server" port="6969" using-nio="true" />
+	
+	<int:channel id="serverBytes2StringChannel"></int:channel>
+	
+	<int-ip:tcp-inbound-gateway id="serverGateway"
+	connection-factory="server"
+	 request-channel="serverBytes2StringChannel"/>
+	
+	<int:channel id="toSA"></int:channel>
+	
+	<int:service-activator input-channel="toSA" 
+	ref="echoService" method="test"></int:service-activator>
+	
+	<int:object-to-string-transformer id="serverBytes2String" 
+	input-channel="serverBytes2StringChannel" 
+	output-channel="toSA"></int:object-to-string-transformer>
+	
+	
+</beans>
